@@ -22,7 +22,8 @@ export class AddPatientComponent implements OnInit {
 
   addPatient() {
     if (this.addPatientForm.valid) {
-
+      // call add patient API and then
+      this.router.navigate(['treatments'], {queryParams: {patientId: this.addPatientForm.get('patientId')}}).then();
     }
   }
 
