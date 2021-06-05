@@ -1,0 +1,67 @@
+<app-header [pageName]="'Add a Procedure'"></app-header>
+
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="12" class="fixed-form">
+        <form [formGroup]="addProcedureForm" class="single-line-container flex-md-row">
+          <mat-form-field>
+            <mat-label>Select hospital</mat-label>
+            <mat-select formControlName="hospital" required>
+              <mat-option *ngFor="let hospital of hospitals" [value]="hospital">{{hospital}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Select Procedures</mat-label>
+            <mat-select formControlName="procedures" multiple required>
+              <mat-option *ngFor="let procedure of allProcedures" [value]="procedure">{{procedure}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <ion-button color="secondary" type="button" [disabled]="addProcedureForm.get('procedures').value.length === 0" (click)="openProcedureDetailsDialog()">Add</ion-button>
+        </form>
+        <ion-text *ngIf="procedureForm.get('procedures')['controls'].length > 0">
+          <p class="hint-text mt-5 mb-0 ml-1">*Swipe right to delete a procedure.</p>
+        </ion-text>
+      </ion-col>
+      <ion-col style="margin-top: 15rem" size="12">
+        <mat-accordion>
+          <form [formGroup]="procedureForm" (ngSubmit)="submit()">
+
+            <ion-item-sliding *ngFor="let procedure of procedureForm.get('procedures')['controls']; let i = index">
+              <ion-item-options side="start">
+                <ion-item-option color="danger" (click)="deleteProcedure(i)">Delete</ion-item-option>
+              </ion-item-options>
+
+              <ion-item>
+                <mat-expansion-panel [formGroup]="procedure">
+                  <mat-expansion-panel-header>
+                    <mat-panel-title>
+                      {{procedure.get('hospital').value}}
+                    </mat-panel-title>
+                    <mat-panel-description>
+                      {{procedure.get('procedure').value}}
+                    </mat-panel-description>
+                  </mat-expansion-panel-header>
+                  <div class="flex-row">
+                    <mat-form-field style="width: 20%; margin-right: 8%">
+                      <input matInput formControlName="count" [value]="procedure.get('count').value" placeholder="Count">
+                    </mat-form-field>
+                    <mat-form-field>
+                      <input matInput formControlName="amount" [value]="procedure.get('amount').value" placeholder="Amount">
+                    </mat-form-field>
+                    <mat-form-field style="width: 100%;">
+                      <input matInput formControlName="patient" [value]="procedure.get('patient').value" placeholder="Patient's name">
+                    </mat-form-field>
+                  </div>
+                </mat-expansion-panel>
+              </ion-item>
+            </ion-item-sliding>
+            <div class="bottom-fixed-div">
+              <ion-button class="w-100" type="submit" [disabled]="procedureForm.get('procedures')['controls'].length === 0">Save</ion-button>
+            </div>
+          </form>
+        </mat-accordion>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

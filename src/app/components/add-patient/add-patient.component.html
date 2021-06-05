@@ -1,0 +1,29 @@
+<ion-toolbar>
+  <ion-title>Add patient</ion-title>
+  <ion-buttons slot="end">
+    <ion-button (click)="closeModal()"><ion-icon name="close-outline"></ion-icon></ion-button>
+  </ion-buttons>
+</ion-toolbar>
+
+<ion-grid class="ion-justify-content-center h-100 d-flex">
+  <ion-row>
+    <div class="m-auto card-dimensions">
+      <form [formGroup]="addPatientForm" class="single-line-container" style="padding: 2rem;" (ngSubmit)="addPatient()">
+        <mat-form-field>
+          <input matInput placeholder="Name" type="text" required formControlName="patientName">
+          <mat-error *ngIf="addPatientForm.get('patientName').hasError('required')">
+            Please enter patient's name
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput placeholder="Patient ID" type="text" required formControlName="patientId">
+          <mat-error *ngIf="addPatientForm.get('patientId').hasError('required')">
+            Please enter patient's unique ID
+          </mat-error>
+        </mat-form-field>
+        <button mat-raised-button class="mt-4" type="submit" style="margin-bottom: 1.5em" color="primary">Add</button>
+      </form>
+    </div>
+  </ion-row>
+</ion-grid>
+

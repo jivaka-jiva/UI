@@ -1,0 +1,57 @@
+<app-header [pageName]="'Dashboard'"></app-header>
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <form class="example-form">
+          <mat-form-field class="example-full-width">
+            <mat-label>Search Patient</mat-label>
+            <input type="text"
+                   placeholder="Patient ID"
+                   aria-label="Search patient"
+                   matInput
+                   [formControl]="myControl"
+                   [matAutocomplete]="auto">
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionSelected($event.option)">
+              <mat-option *ngFor="let option of filteredPatients | async" [value]="option">
+                {{option}}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+        </form>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col *ngFor="let card of cards"
+               [size]="card.colClasses.xs"
+               [sizeSm]="card.colClasses.sm"
+               [sizeMd]="card.colClasses.md"
+               [sizeLg]="card.colClasses.lg"
+               [sizeXl]="card.colClasses.xl"
+      >
+        <mat-card class="card-box m-0" [ngClass]="card.cardColor">
+          <div class="inner">
+            <h3 *ngIf="card.type === 'currency'"> {{card.value | currency: 'INR'}} </h3>
+            <h3 *ngIf="card.type === 'value'"> {{card.value | number}} </h3>
+            <p> {{card.title}} </p>
+          </div>
+          <div class="icon">
+            <i [ngClass]="card.icon" aria-hidden="true"></i>
+          </div>
+          <a [routerLink]="[card.viewMoreLink]" class="card-box-footer">View More <i class="fa fa-arrow-circle-right"></i></a>
+        </mat-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button color="secondary">
+      <ion-icon ios="add-outline" [routerLink]="'/add-procedure'" md="add-sharp"></ion-icon>
+    </ion-fab-button>
+<!--    <ion-fab-list side="top">-->
+<!--      <ion-fab-button><i class="fa fa-user" [routerLink]="'/add-procedure'" aria-hidden="true"></i></ion-fab-button>-->
+<!--      <ion-fab-button><i class="fa fa-stethoscope" aria-hidden="true"></i></ion-fab-button>-->
+<!--    </ion-fab-list>-->
+  </ion-fab>
+
+</ion-content>
