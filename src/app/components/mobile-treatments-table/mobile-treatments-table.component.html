@@ -1,0 +1,23 @@
+<mat-accordion class="example-headers-align">
+  <mat-expansion-panel *ngFor="let treatment of allTreatments">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        {{treatment.patient.name}}
+      </mat-panel-title>
+      <mat-panel-description>
+        {{treatment.identifier}}
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <app-treatment-details [treatment]="treatment"></app-treatment-details>
+
+    <mat-action-row>
+      <div>
+        Procedures: 14
+      </div>
+      <div>
+        <button mat-mini-fab mat-raised-button color=""><mat-icon>add</mat-icon></button>
+        <button mat-mini-fab mat-raised-button color="primary"><mat-icon>view_list</mat-icon></button>
+      </div>
+    </mat-action-row>
+  </mat-expansion-panel>
+</mat-accordion>

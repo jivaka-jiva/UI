@@ -9,15 +9,19 @@ const routes: Routes = [
     component: TwoColumnLayoutPage,
     children: [
       {
+        path: 'treatments',
+        loadChildren: () => import('../pages/treatments/treatments.module').then((m) => m.TreatmentsPageModule),
+      },
+      {
         path: 'add-procedure',
-        loadChildren: () => import('../pages/add-procedure/add-procedure.module').then(m => m.AddProcedurePageModule)
+        loadChildren: () => import('../pages/add-procedure/add-procedure.module').then((m) => m.AddProcedurePageModule),
       },
       {
         path: 'dashboard',
-        loadChildren: () => import('../pages/dashboard/dashboard.module').then(m => m.DashboardPageModule)
-      }
-    ]
-  }
+        loadChildren: () => import('../pages/dashboard/dashboard.module').then((m) => m.DashboardPageModule),
+      },
+    ],
+  },
 ];
 
 @NgModule({

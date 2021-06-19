@@ -1,0 +1,86 @@
+<mat-card *ngIf="treatment" class="ion-hide-md-down">
+  <mat-card-header>
+    <mat-card-title>{{treatment.patient.name}}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <ion-grid>
+      <ion-row>
+        <ion-col size="6">
+          IPD number:
+        </ion-col>
+        <ion-col size="6">
+          {{treatment.id}}
+        </ion-col>
+        <ion-col size="6">
+          Treatment Name:
+        </ion-col>
+        <ion-col size="6">
+          {{treatment.identifier}}
+        </ion-col>
+        <ion-col size="6">
+          Date of admission:
+        </ion-col>
+        <ion-col size="6">
+          {{treatment.admissionDate}}
+        </ion-col>
+        <ion-col size="6">
+          Date of discharge:
+        </ion-col>
+        <ion-col size="6">
+          {{treatment.dischargeDate}}
+        </ion-col>
+        <ion-col size="6">
+          Payment type:
+        </ion-col>
+        <ion-col size="6">
+          {{treatment.payType}}
+        </ion-col>
+        <ion-col size="6">
+          Notes:
+        </ion-col>
+        <ion-col size="6">
+          {{treatment.notes}}
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-raised-button mat-button>Add Procedure</button>
+  </mat-card-actions>
+</mat-card>
+<mat-card-content *ngIf="treatment" class="ion-hide-sm-up">
+  <ion-grid>
+    <ion-row>
+      <ion-col size="6">
+        IPD number:
+      </ion-col>
+      <ion-col size="6">
+        {{treatment.id}}
+      </ion-col>
+      <ion-col size="6">
+        Date of admission:
+      </ion-col>
+      <ion-col size="6">
+        {{treatment.admissionDate}}
+      </ion-col>
+      <ion-col size="6">
+        Date of discharge:
+      </ion-col>
+      <ion-col size="6">
+        {{treatment.dischargeDate}}
+      </ion-col>
+      <ion-col size="6">
+        Payment type:
+      </ion-col>
+      <ion-col size="6">
+        {{treatment.payType}}
+      </ion-col>
+      <ion-col size="6">
+        Notes:
+      </ion-col>
+      <ion-col size="6">
+        {{treatment.notes}}
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</mat-card-content>

@@ -1,9 +1,34 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>treatments</ion-title>
+    <ion-buttons slot="start">
+      <ion-menu-button color="light">
+        <ion-menu-button color="dark"></ion-menu-button>
+      </ion-menu-button>
+    </ion-buttons>
+    <ion-title>Treatments</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+  <ion-grid class="p-lg-5">
+    <ion-row>
+      <ion-col class="ion-hide-md-down" size="6" *ngIf="treatments">
+        <app-table [displayedColumns]="displayedColumns" [treatments]="treatments" (selectTreatment)="selectTreatment($event)"></app-table>
+      </ion-col>
+      <ion-col class="ion-hide-sm-up" size="12"  *ngIf="treatments">
+        <mat-form-field appearance="fill" class="search-field">
+          <mat-label>Search using patient's name or IPD </mat-label>
+          <input matInput [formControl]="search">
+          <mat-hint>Searched value is matched anywhere within the string</mat-hint>
+        </mat-form-field>
+        <app-mobile-treatments-table [allTreatments]="displayTreatments"></app-mobile-treatments-table>
+      </ion-col>
+      <ion-col class="ion-hide-md-down" size="12" size-md="6" *ngIf="allTreatments">
+        <div>
+          <app-treatment-details [treatment]="allTreatments[selectedTreatmentID - 1]"></app-treatment-details>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 
 </ion-content>

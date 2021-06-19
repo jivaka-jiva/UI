@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {Platform} from '@ionic/angular';
-import {SplashScreen} from '@ionic-native/splash-screen/ngx';
-import {StatusBar} from '@ionic-native/status-bar/ngx';
-import {AuthService} from '../shared/services/auth.service';
+import { Platform } from '@ionic/angular';
+import { SplashScreen } from '@ionic-native/splash-screen/ngx';
+import { StatusBar } from '@ionic-native/status-bar/ngx';
+import { AuthService } from '../shared/services/auth.service';
 
 @Component({
   selector: 'app-two-column-layout',
@@ -15,19 +15,19 @@ export class TwoColumnLayoutPage implements OnInit {
     {
       title: 'Dashboard',
       url: '/dashboard',
-      icon: 'fitness'
+      icon: 'pie-chart',
     },
     {
-      title: 'Reports',
-      url: '/reports',
-      icon: 'pie-chart'
-    }
+      title: 'Treatments',
+      url: '/treatments',
+      icon: 'fitness',
+    },
   ];
   constructor(
-      private platform: Platform,
-      private splashScreen: SplashScreen,
-      private statusBar: StatusBar,
-      public authService: AuthService
+    private platform: Platform,
+    private splashScreen: SplashScreen,
+    private statusBar: StatusBar,
+    public authService: AuthService
   ) {
     this.initializeApp();
   }
@@ -42,7 +42,7 @@ export class TwoColumnLayoutPage implements OnInit {
   ngOnInit() {
     const path = window.location.pathname.split('folder/')[1];
     if (path !== undefined) {
-      this.selectedIndex = this.appPages.findIndex(page => page.title.toLowerCase() === path.toLowerCase());
+      this.selectedIndex = this.appPages.findIndex((page) => page.title.toLowerCase() === path.toLowerCase());
     }
   }
 }
