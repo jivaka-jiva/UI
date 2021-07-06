@@ -1,0 +1,52 @@
+<app-header pageName="Procedures"></app-header>
+
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <h1>{{(selectedTreatment$ | async)?.patient.name}}</h1>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="6">
+        <p class="font-small m-0">
+          IPD no: {{(selectedTreatment$ | async)?.id}}
+        </p>
+      </ion-col>
+      <ion-col size="6" class="ion-text-end">
+        <p class="font-small m-0">
+          Payment type: {{(selectedTreatment$ | async)?.payType}}
+        </p>
+      </ion-col>
+      <ion-col size="6">
+        <p class="font-small m-0">
+          DOA: {{(selectedTreatment$ | async)?.admissionDate}}
+        </p>
+      </ion-col>
+      <ion-col size="6" class="ion-text-end">
+        <p class="font-small m-0">
+          DOD: {{(selectedTreatment$ | async)?.dischargeDate}}
+        </p>
+      </ion-col>
+      <ion-col size="12" class="ion-text-justify">
+        <p class="font-small m-0">
+          Notes: {{(selectedTreatment$ | async)?.notes}}
+        </p>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-list>
+    <ion-list-header class="list-header">
+      Procedures
+    </ion-list-header>
+    <ion-item *ngFor="let procedure of (procedures$ | async)">
+      <ion-label>{{procedure.name}}</ion-label>
+      <ion-note slot="end" color="primary">&#8377;{{procedure.cost}}</ion-note>
+    </ion-item>
+  </ion-list>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button color="secondary">
+      <ion-icon ios="add-outline" [routerLink]="'/add-procedure'" md="add-sharp"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

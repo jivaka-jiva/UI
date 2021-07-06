@@ -1,9 +1,6 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MatTableDataSource } from '@angular/material/table';
 import { ITreatment } from '../../shared/interfaces/treatment';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
 import { FormControl } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
 

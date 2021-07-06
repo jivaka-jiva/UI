@@ -1,9 +1,9 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { TreatmentTableData } from '../../pages/treatments/treatments.page';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ITreatment } from '../../shared/interfaces/treatment';
+import { Router } from '@angular/router';
+import { TreatmentsService } from '../../shared/services/treatments.service';
 
 @Component({
   selector: 'app-mobile-treatments-table',
@@ -16,7 +16,12 @@ export class MobileTreatmentsTableComponent implements OnInit {
   expandedElement: ITreatment | null;
   dataSource: MatTableDataSource<TreatmentTableData>;
 
-  constructor() {}
+  constructor(private router: Router, private treatmentsService: TreatmentsService) {}
 
   ngOnInit() {}
+
+  goToProcedures(treatment: ITreatment) {
+    this.treatmentsService.setTreatment(treatment);
+    this.router.navigateByUrl('procedures').then();
+  }
 }
