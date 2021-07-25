@@ -5,7 +5,7 @@
       <ion-col class="ion-hide-md-down" size="6" *ngIf="treatments">
         <app-table [displayedColumns]="displayedColumns" [treatments]="treatments" (selectTreatment)="selectTreatment($event)"></app-table>
       </ion-col>
-      <ion-col size="12"  *ngIf="allHospitals">
+      <ion-col size="12" size-md="4"  *ngIf="allHospitals">
         <mat-form-field class="full-width">
           <mat-select [(value)]="selectedHospital" name="hospitals" (selectionChange)="getTreatments(selectedHospital)">
             <mat-option *ngFor="let hospital of allHospitals" [value]="hospital">

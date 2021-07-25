@@ -149,8 +149,8 @@ export class AddProcedurePage implements OnInit {
                 <ion-label>{{ procedure }}</ion-label>
               </ion-item-divider>
 
-              <div class="flex-row ml-5 mt-2" style="width: 72%">
-                <mat-form-field style="width: 20%; margin-right: 8%">
+              <div class="flex-row ml-5 mt-2" style="width: 90%">
+                <mat-form-field style="width: 20%; margin-right: 4%">
                   <input matInput formControlName="count" placeholder="Count" required />
                 </mat-form-field>
                 <mat-form-field>
