@@ -10,6 +10,7 @@ import { TreatmentsPage } from './treatments.page';
 import { ComponentsModule } from '../../components/components.module';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 
 @NgModule({
   imports: [
@@ -21,6 +22,7 @@ import { MatInputModule } from '@angular/material/input';
     MatFormFieldModule,
     ReactiveFormsModule,
     MatInputModule,
+    MatSelectModule,
   ],
   declarations: [TreatmentsPage],
 })

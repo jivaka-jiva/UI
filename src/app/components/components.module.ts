@@ -15,6 +15,7 @@ import { MobileTreatmentsTableComponent } from './mobile-treatments-table/mobile
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { MatRippleModule } from '@angular/material/core';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [HeaderComponent, TableComponent, TreatmentDetailsComponent, MobileTreatmentsTableComponent],
@@ -31,6 +32,7 @@ import { MatRippleModule } from '@angular/material/core';
     MatExpansionModule,
     MatIconModule,
     MatRippleModule,
+    RouterModule,
   ],
   exports: [HeaderComponent, TableComponent, TreatmentDetailsComponent, MobileTreatmentsTableComponent],
 })

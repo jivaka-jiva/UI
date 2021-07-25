@@ -4,6 +4,11 @@ import { ModalController, ToastController } from '@ionic/angular';
 import { AuthService } from '../../shared/services/auth.service';
 import { Router } from '@angular/router';
 import { Storage } from '@ionic/storage';
+import { Observable, of, Subscription } from 'rxjs';
+import { TreatmentsService } from '../../shared/services/treatments.service';
+import { IHospital } from '../../shared/interfaces/hospital';
+import { ProceduresService } from '../../shared/services/procedures.service';
+import { IProcedure } from '../../shared/interfaces/procedure';
 
 @Component({
   selector: 'app-add-procedure',
@@ -12,18 +17,19 @@ import { Storage } from '@ionic/storage';
 })
 export class AddProcedurePage implements OnInit {
   hospitals = [];
-  allProcedures = ['Inject', 'Sedate', 'Root canal', 'Eye test'];
+  allProcedures: string[] = [];
   addProcedureForm: FormGroup;
   procedureForm: FormGroup;
+  hospital$ = new Subscription();
   constructor(
     public modalController: ModalController,
     public toastController: ToastController,
     private authService: AuthService,
     private router: Router,
-    private storage: Storage
-  ) {
-    this.storage.get('hospitals').then((data) => (this.hospitals = data));
-  }
+    private storage: Storage,
+    private treatmentsService: TreatmentsService,
+    private proceduresService: ProceduresService
+  ) {}
 
   ngOnInit() {
     this.initializeForms();
@@ -31,23 +37,37 @@ export class AddProcedurePage implements OnInit {
 
   ionViewWillEnter() {
     this.initializeForms();
-    this.addProcedureForm.get('hospital').valueChanges.subscribe((value) => {
-      this.addProcedureForm.get('procedures').enable();
-      this.addProcedureForm.get('procedures').patchValue([]);
-    });
+    // this.addProcedureForm.get('hospital').valueChanges.subscribe((value) => {
+    //   this.addProcedureForm.get('procedures').enable();
+    //   this.addProcedureForm.get('procedures').patchValue([]);
+    // });
   }
 
   ionViewWillLeave() {
     this.initializeForms();
+    this.hospital$.unsubscribe();
+  }
+
+  getProcedures(hospitalID: number): Observable<any> {
+    return this.proceduresService.getProcedures(hospitalID);
   }
 
   initializeForms() {
+    // this.storage.get('hospitals').then((data) => (this.hospitals = data));
     this.addProcedureForm = new FormGroup({
-      hospital: new FormControl('', [Validators.required]),
-      procedures: new FormControl({ value: [], disabled: true }, [Validators.required]),
+      // hospital: new FormControl('', [Validators.required]),
+      procedures: new FormControl([], [Validators.required]),
     });
     this.procedureForm = new FormGroup({
       procedures: new FormArray([]),
+    });
+    this.hospital$ = this.treatmentsService.getSelectedHospital().subscribe(async (hospital) => {
+      if (hospital) {
+        const procedures = await this.getProcedures(hospital.id).toPromise();
+        this.allProcedures = procedures.map((procedure) => procedure.name);
+      } else {
+        this.router.navigateByUrl('').then();
+      }
     });
   }
 
@@ -65,15 +85,15 @@ export class AddProcedurePage implements OnInit {
     }
   }
 
-  addProcedure(procedureDetails: FormGroup[]) {
+  addProcedure(procedureDetails: FormGroup) {
+    const procedures: any[] = procedureDetails.value;
+    this.proceduresService.addProcedures(procedures);
     const allSelectedProcedures = this.procedureForm.get('procedures') as FormArray;
-    procedureDetails.forEach((procedureGroup) => {
+    procedures.forEach((procedureGroup) => {
       const procedure = new FormGroup({
-        hospital: new FormControl(this.addProcedureForm.get('hospital').value, [Validators.required]),
-        procedure: new FormControl(procedureGroup.value.procedure, [Validators.required]),
-        count: new FormControl(procedureGroup.value.count, [Validators.min(1)]),
-        amount: new FormControl(procedureGroup.value.amount, [Validators.required, Validators.min(0)]),
-        patient: new FormControl(procedureGroup.value.patient),
+        procedure: new FormControl(procedureGroup.procedure, [Validators.required]),
+        count: new FormControl(procedureGroup.count, [Validators.min(1)]),
+        amount: new FormControl(procedureGroup.amount, [Validators.required, Validators.min(0)]),
       });
       allSelectedProcedures.controls.push(procedure);
     });
@@ -81,36 +101,11 @@ export class AddProcedurePage implements OnInit {
 
   submit() {
     if (this.procedureForm.valid) {
-      this.saveData();
       this.authService.showLoader('Saving procedures').then();
       setTimeout(() => {
-        this.router.navigateByUrl('').then(() => this.authService.dismissLoader());
+        this.router.navigateByUrl('procedures').then(() => this.authService.dismissLoader());
       }, 1000);
     }
-  }
-
-  async saveData() {
-    // TODO: for demo purpose
-    let totalFees = parseInt(await this.storage.get('total_fees_this_month'), 10) || 0;
-    let totalProcedures = parseInt(await this.storage.get('total_procedures'), 10) || 0;
-    const hospitals = await this.storage.get('hospitals');
-    const hospitalData = {};
-    await hospitals.forEach(async (hospital) => {
-      hospitalData[hospital] = (await this.storage.get(hospital)) || 0;
-    });
-
-    const procedureList = (this.procedureForm.get('procedures') as FormArray).controls;
-    procedureList.forEach((procedure) => {
-      totalFees += parseInt(procedure.value.amount, 10) * parseInt(procedure.value.count, 10);
-      totalProcedures += parseInt(procedure.value.count, 10);
-      hospitalData[procedure.value.hospital] =
-        parseInt(hospitalData[procedure.value.hospital], 10) + parseInt(procedure.value.amount, 10) * parseInt(procedure.value.count, 10);
-    });
-    await this.storage.set('total_fees_this_month', totalFees + '');
-    await this.storage.set('total_procedures', totalProcedures + '');
-    await hospitals.forEach(async (hospital) => {
-      await this.storage.set(hospital, hospitalData[hospital]);
-    });
   }
 
   async presentToast(mes: string) {
@@ -121,8 +116,15 @@ export class AddProcedurePage implements OnInit {
     await toast.present();
   }
 
-  deleteProcedure(index) {
+  deleteProcedure(procedure) {
+    this.proceduresService.removeProcedure(procedure.value.procedure);
     const procedures = this.procedureForm.get('procedures') as FormArray;
+    const index = procedures.controls
+      .reduce((a, c) => {
+        a.push(c.value.name);
+        return a;
+      }, [])
+      .indexOf(procedure.id);
     procedures.controls.splice(index, 1);
   }
 }
@@ -153,9 +155,6 @@ export class AddProcedurePage implements OnInit {
                 </mat-form-field>
                 <mat-form-field>
                   <input matInput formControlName="amount" placeholder="Amount per procedure" required />
-                </mat-form-field>
-                <mat-form-field style="width: 100%">
-                  <input matInput formControlName="patient" placeholder="Patient's name" required />
                 </mat-form-field>
               </div>
             </ion-item-group>
@@ -201,7 +200,6 @@ export class ProcedureDetailsComponent implements OnInit {
       procedure: new FormControl(procedure),
       count: new FormControl(1, [Validators.min(1), Validators.required]),
       amount: new FormControl(100, [Validators.min(0), Validators.required]),
-      patient: new FormControl(''),
     });
     procedureDetailArray.controls.push(procedureDetails);
   }
@@ -209,7 +207,7 @@ export class ProcedureDetailsComponent implements OnInit {
   submit() {
     if (this.procedureDetails.valid) {
       const procedureDetails = this.procedureDetails.get('procedures') as FormArray;
-      this.dismissModal(procedureDetails.controls);
+      this.dismissModal(procedureDetails);
     } else {
       this.presentToast('Form is invalid').then();
     }

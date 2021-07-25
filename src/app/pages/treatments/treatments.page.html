@@ -5,7 +5,16 @@
       <ion-col class="ion-hide-md-down" size="6" *ngIf="treatments">
         <app-table [displayedColumns]="displayedColumns" [treatments]="treatments" (selectTreatment)="selectTreatment($event)"></app-table>
       </ion-col>
-      <ion-col class="ion-hide-sm-up" size="12"  *ngIf="treatments">
+      <ion-col size="12"  *ngIf="allHospitals">
+        <mat-form-field class="full-width">
+          <mat-select [(value)]="selectedHospital" name="hospitals" (selectionChange)="getTreatments(selectedHospital)">
+            <mat-option *ngFor="let hospital of allHospitals" [value]="hospital">
+              {{hospital.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </ion-col>
+      <ion-col class="ion-hide-sm-up" size="12" *ngIf="displayTreatments">
         <mat-form-field appearance="fill" class="search-field">
           <mat-label>Search using patient's name or IPD </mat-label>
           <input matInput [formControl]="search">

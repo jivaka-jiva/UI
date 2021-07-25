@@ -5,12 +5,12 @@
     <ion-row>
       <ion-col size="12" class="fixed-form">
         <form [formGroup]="addProcedureForm" class="single-line-container flex-md-row">
-          <mat-form-field>
-            <mat-label>Select hospital</mat-label>
-            <mat-select formControlName="hospital" required>
-              <mat-option *ngFor="let hospital of hospitals" [value]="hospital">{{hospital}}</mat-option>
-            </mat-select>
-          </mat-form-field>
+<!--          <mat-form-field>-->
+<!--            <mat-label>Select hospital</mat-label>-->
+<!--            <mat-select formControlName="hospital" required>-->
+<!--              <mat-option *ngFor="let hospital of hospitals" [value]="hospital">{{hospital}}</mat-option>-->
+<!--            </mat-select>-->
+<!--          </mat-form-field>-->
           <mat-form-field>
             <mat-label>Select Procedures</mat-label>
             <mat-select formControlName="procedures" multiple required>
@@ -23,21 +23,18 @@
           <p class="hint-text mt-5 mb-0 ml-1">*Swipe right to delete a procedure.</p>
         </ion-text>
       </ion-col>
-      <ion-col style="margin-top: 15rem" size="12">
+      <ion-col style="margin-top: 45%" size="12">
         <mat-accordion>
           <form [formGroup]="procedureForm" (ngSubmit)="submit()">
 
             <ion-item-sliding *ngFor="let procedure of procedureForm.get('procedures')['controls']; let i = index">
               <ion-item-options side="start">
-                <ion-item-option color="danger" (click)="deleteProcedure(i)">Delete</ion-item-option>
+                <ion-item-option color="danger" (click)="deleteProcedure(procedure)">Delete</ion-item-option>
               </ion-item-options>
 
               <ion-item>
                 <mat-expansion-panel [formGroup]="procedure">
                   <mat-expansion-panel-header>
-                    <mat-panel-title>
-                      {{procedure.get('hospital').value}}
-                    </mat-panel-title>
                     <mat-panel-description>
                       {{procedure.get('procedure').value}}
                     </mat-panel-description>
@@ -48,9 +45,6 @@
                     </mat-form-field>
                     <mat-form-field>
                       <input matInput formControlName="amount" [value]="procedure.get('amount').value" placeholder="Amount">
-                    </mat-form-field>
-                    <mat-form-field style="width: 100%;">
-                      <input matInput formControlName="patient" [value]="procedure.get('patient').value" placeholder="Patient's name">
                     </mat-form-field>
                   </div>
                 </mat-expansion-panel>

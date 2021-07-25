@@ -24,4 +24,9 @@ export class MobileTreatmentsTableComponent implements OnInit {
     this.treatmentsService.setTreatment(treatment);
     this.router.navigateByUrl('procedures').then();
   }
+
+  addProcedure(treatment: ITreatment) {
+    this.treatmentsService.setTreatment(treatment);
+    this.router.navigateByUrl('add-procedure').then();
+  }
 }

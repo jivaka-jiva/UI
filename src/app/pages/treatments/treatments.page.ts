@@ -2,7 +2,11 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ITreatment } from '../../shared/interfaces/treatment';
 import { FormControl } from '@angular/forms';
-import { debounceTime } from 'rxjs/operators';
+import { debounceTime, delay } from 'rxjs/operators';
+import { IHospital } from '../../shared/interfaces/hospital';
+import { Observable, Observer, of } from 'rxjs';
+import { AuthService } from '../../shared/services/auth.service';
+import { TreatmentsService } from '../../shared/services/treatments.service';
 
 // for mocking data
 const NAMES = [
@@ -55,34 +59,59 @@ export class TreatmentsPage implements OnInit {
   displayTreatments: ITreatment[] = [];
   treatments: TreatmentTableData[];
   search = new FormControl(null);
+  allHospitals: IHospital[];
+  selectedHospital: IHospital;
 
-  constructor(private route: ActivatedRoute) {
-    this.treatments = Array.from({ length: 100 }, (_, k) => this.createMockTreatments(k + 1));
+  constructor(private route: ActivatedRoute, private authService: AuthService, private treatmentService: TreatmentsService) {}
+
+  getHospitals(): Observable<IHospital[]> {
+    const mockHospitals: IHospital[] = [
+      {
+        id: 1,
+        name: 'Dharamshila',
+      },
+      {
+        id: 2,
+        name: 'Metro',
+      },
+    ];
+    return of(mockHospitals).pipe(delay(500));
+  }
+
+  async getTreatments(hospital: IHospital) {
+    this.treatmentService.setSelectedHospital(hospital);
+    this.allTreatments = await this.createMockTreatments().toPromise();
+    this.treatments = this.allTreatments.reduce((a, c, i) => {
+      a.push({
+        sno: i + 1,
+        identifier: c.identifier,
+        id: c.id,
+        patient: c.patient,
+      });
+      return a;
+    }, []);
     this.displayTreatments = this.allTreatments;
   }
 
-  createMockTreatments(id: number): TreatmentTableData {
-    const name =
-      NAMES[Math.round(Math.random() * (NAMES.length - 1))] + ' ' + NAMES[Math.round(Math.random() * (NAMES.length - 1))].charAt(0) + '.';
-    const rowData = {
-      sno: id,
-      identifier: IDENTIFIERS[Math.floor(Math.random() * IDENTIFIERS.length)],
-      id: '' + Math.floor(Math.random() * (9999999 - 1000000 + 1)),
-      patient: name,
-    };
-    this.allTreatments.push({
-      id: rowData.id,
-      identifier: rowData.identifier,
-      patient: {
-        id: '' + id,
-        name: rowData.patient,
-      },
-      dischargeDate: this.randomDate(new Date(2021, 4, 1), new Date()),
-      admissionDate: this.randomDate(new Date(2021, 4, 1), new Date()),
-      payType: 'cash',
-      notes: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+  createMockTreatments(): Observable<ITreatment[]> {
+    const treatments: ITreatment[] = [];
+    Array.from({ length: 20 }, (_, k) => {
+      const name =
+        NAMES[Math.round(Math.random() * (NAMES.length - 1))] + ' ' + NAMES[Math.round(Math.random() * (NAMES.length - 1))].charAt(0) + '.';
+      treatments.push({
+        id: '' + Math.floor(Math.random() * (9999999 - 1000000 + 1)),
+        identifier: IDENTIFIERS[Math.floor(Math.random() * IDENTIFIERS.length)],
+        patient: {
+          id: '' + k,
+          name,
+        },
+        dischargeDate: this.randomDate(new Date(2021, 4, 1), new Date()),
+        admissionDate: this.randomDate(new Date(2021, 4, 1), new Date()),
+        payType: 'cash',
+        notes: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+      });
     });
-    return rowData;
+    return of(treatments).pipe(delay(500));
   }
 
   randomDate(start, end) {
@@ -95,7 +124,11 @@ export class TreatmentsPage implements OnInit {
     );
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+    this.allHospitals = await this.getHospitals().toPromise();
+    this.selectedHospital = this.allHospitals[0];
+    this.treatmentService.setSelectedHospital(this.selectedHospital);
+    await this.getTreatments(this.selectedHospital);
     this.search.valueChanges.pipe(debounceTime(200)).subscribe((value) => this.filterTreatments(value));
   }
 
